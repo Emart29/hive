@@ -242,8 +242,11 @@ def register_tools(
                 "query_truncated": query_truncated,
             }
 
-        except ImportError as e:
-            return {"error": str(e)}
+        except ImportError:
+            return {
+                "error": "google-cloud-bigquery is not installed.",
+                "help": "Install the optional dependency with: pip install google-cloud-bigquery",
+            }
         except Exception as e:
             error_msg = str(e)
 
@@ -357,8 +360,11 @@ def register_tools(
                 "tables": tables_info,
             }
 
-        except ImportError as e:
-            return {"error": str(e)}
+        except ImportError:
+            return {
+                "error": "google-cloud-bigquery is not installed.",
+                "help": "Install the optional dependency with: pip install google-cloud-bigquery",
+            }
         except Exception as e:
             error_msg = str(e)
 
