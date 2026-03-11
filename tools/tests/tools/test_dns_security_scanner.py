@@ -147,14 +147,6 @@ class TestDnsAvailability:
 class TestSpfChecks:
     """Test SPF record detection and policy analysis."""
 
-    def _mock_resolver_with_spf(self, spf_record):
-        """Create a mock resolver that returns the given SPF record."""
-        mock_resolver = MagicMock()
-        mock_rdata = MagicMock()
-        mock_rdata.to_text.return_value = f'"{spf_record}"'
-        mock_resolver.resolve.return_value = [mock_rdata]
-        return mock_resolver
-
     def test_spf_hardfail_detected(self, scan_fn):
         with patch(
             "aden_tools.tools.dns_security_scanner.dns_security_scanner._DNS_AVAILABLE", True

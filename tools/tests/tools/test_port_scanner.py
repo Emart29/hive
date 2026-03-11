@@ -83,6 +83,7 @@ class TestInputValidation:
                 # Timeout > 10 should be clamped
                 result = await scan_fn("example.com", ports="80", timeout=100.0)
                 assert "error" not in result
+                assert mock_check.call_args[0][2] <= 10.0
 
 
 # ---------------------------------------------------------------------------

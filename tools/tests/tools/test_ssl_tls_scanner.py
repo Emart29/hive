@@ -56,25 +56,28 @@ class TestInputValidation:
         with patch("ssl.create_default_context") as mock_ctx:
             mock_ctx.return_value.wrap_socket.side_effect = TimeoutError()
             result = scan_fn("https://example.com")
-            assert "error" in result or result.get("hostname") == "example.com"
+            assert "example.com" in result["error"]
+            assert "https://" not in result["error"]
 
     def test_strips_http_prefix(self, scan_fn):
         with patch("ssl.create_default_context") as mock_ctx:
             mock_ctx.return_value.wrap_socket.side_effect = TimeoutError()
             result = scan_fn("http://example.com")
-            assert "error" in result or result.get("hostname") == "example.com"
+            assert "example.com" in result["error"]
+            assert "http://" not in result["error"]
 
     def test_strips_path(self, scan_fn):
         with patch("ssl.create_default_context") as mock_ctx:
             mock_ctx.return_value.wrap_socket.side_effect = TimeoutError()
             result = scan_fn("example.com/path/to/page")
-            assert "error" in result or result.get("hostname") == "example.com"
+            assert "example.com" in result["error"]
+            assert "/path" not in result["error"]
 
     def test_strips_port_from_hostname(self, scan_fn):
         with patch("ssl.create_default_context") as mock_ctx:
             mock_ctx.return_value.wrap_socket.side_effect = TimeoutError()
             result = scan_fn("example.com:8443")
-            assert "error" in result or result.get("hostname") == "example.com"
+            assert "example.com:443" in result["error"]
 
 
 # ---------------------------------------------------------------------------
