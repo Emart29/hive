@@ -804,59 +804,6 @@ class TestConveniencePublishers:
         assert received[0].data["context"] == "Complex decision required"
 
     @pytest.mark.asyncio
-    async def test_emit_worker_escalation_ticket(self):
-        """emit_worker_escalation_ticket publishes correct event."""
-        bus = EventBus()
-        received = []
-
-        async def handler(event: AgentEvent) -> None:
-            received.append(event)
-
-        bus.subscribe(event_types=[EventType.WORKER_ESCALATION_TICKET], handler=handler)
-
-        await bus.emit_worker_escalation_ticket(
-            stream_id="test_stream",
-            node_id="judge_node",
-            ticket={
-                "severity": "high",
-                "cause": "Worker stalled for 5 minutes",
-                "suggested_action": "restart",
-            },
-            execution_id="exec_1",
-        )
-
-        assert len(received) == 1
-        assert received[0].type == EventType.WORKER_ESCALATION_TICKET
-        assert received[0].data["ticket"]["severity"] == "high"
-
-    @pytest.mark.asyncio
-    async def test_emit_queen_intervention_requested(self):
-        """emit_queen_intervention_requested publishes correct event."""
-        bus = EventBus()
-        received = []
-
-        async def handler(event: AgentEvent) -> None:
-            received.append(event)
-
-        bus.subscribe(event_types=[EventType.QUEEN_INTERVENTION_REQUESTED], handler=handler)
-
-        await bus.emit_queen_intervention_requested(
-            stream_id="test_stream",
-            node_id="queen_node",
-            ticket_id="ticket_123",
-            analysis="Worker appears stuck in retry loop",
-            severity="high",
-            queen_graph_id="queen_graph",
-            queen_stream_id="queen_stream",
-            execution_id="exec_1",
-        )
-
-        assert len(received) == 1
-        assert received[0].type == EventType.QUEEN_INTERVENTION_REQUESTED
-        assert received[0].data["ticket_id"] == "ticket_123"
-        assert received[0].data["severity"] == "high"
-
-    @pytest.mark.asyncio
     async def test_emit_llm_turn_complete(self):
         """emit_llm_turn_complete publishes correct event."""
         bus = EventBus()
@@ -958,11 +905,9 @@ class TestEventType:
         assert EventType.WEBHOOK_RECEIVED
         assert EventType.NODE_TOOL_DOOM_LOOP
         assert EventType.ESCALATION_REQUESTED
-        assert EventType.WORKER_ESCALATION_TICKET
-        assert EventType.QUEEN_INTERVENTION_REQUESTED
         assert EventType.LLM_TURN_COMPLETE
         assert EventType.NODE_ACTION_PLAN
-        assert EventType.WORKER_LOADED
+        assert EventType.WORKER_GRAPH_LOADED
         assert EventType.CREDENTIALS_REQUIRED
         assert EventType.EXECUTION_RESURRECTED
         assert EventType.DRAFT_GRAPH_UPDATED
